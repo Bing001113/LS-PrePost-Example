@@ -1,0 +1,30 @@
+Unit: kg-mm-ms-kN-GPa
+
+Geometry:
+Box: Shell, open at both the left and right end faces.
+Size: (-5,5) (0,1) (0,1) mesh:100,10,10, then delete 2 side surfaces
+A block used to simulate the impact is created directly on the top surface of the crash box. The advantage of this approach is that the block and the crash box can share the nodes. Shared nodes allow the force to be transferred directly.
+Block: Solid, at the center of the shell and its' bottom surface shares the nodes with the top surface of the shell. 
+Size: thickness 1, segment 10, along z direction.
+Rigid wall: RIGIDWALL_PLANAR, NSID:0(All nodes in the model are treated as candidate contact nodes for the rigid wall.) Position: ZT=-0.2
+
+
+Material:
+Box: JOHNSON_COOK_STOCHASTIC (MAT015)+DEFINE_HAX_PROPERTIES+DEFINE_STOCHASTIC_VARIATION +EOS (LINEAR_POLYNOMIAL)(combined with stochastic)
+RO:7850 G:5.962e+10 E:1.61e+11 PR:0.35 A:4e+08 B:1.5e+09 N:0.4 C:0.045 M:1.2 TM:1800 TR:293 EPSO:0.0001 CP:452
+EOS: C1:1.78e+11
+Block: ELASTIC (MAT001)
+RO:7850 E:2.1e+11 PR:0.3
+
+Velocity: Along Z direction, -100
+STYP=3, choose both the box and the block by part.
+
+Element Formulation:
+Box: Shell,
+Block: Solid, T1=0.05 (thickness of the shell), NLOC=1 (direction of the thickness)
+
+Contact: 
+Automatic Single surface, SURFA/B=0 (All eligible exterior surfaces in the model are treated as candidate contact surfaces.)
+
+End time:0.01
+Data output: output time interval DT=0.001
